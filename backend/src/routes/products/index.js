@@ -5,8 +5,8 @@ const productRoutes = [
     method: "get",
     path: "/products",
     handler: async (req, res) => {
-      const products = await Product.find().populate("category");
-      res.json(products);
+      const products = await Product.find().populate(["category"]);
+      return res.status(200).json(products);
     },
   },
   {
