@@ -1,4 +1,24 @@
-import { Product } from "../../models/index.js";
+import { Category, Product } from "../../models/index.js";
+import { z } from "zod";
+
+const RegexMongoObjectId = /^[0-9a-fA-F]{24}$/;
+
+const idSchema = z.string().regex(RegexMongoObjectId, {
+  message: "Invalid ObjectId format",
+});
+
+const productSchema = z
+  .object({
+    name: z.string(),
+    description: z.string().optional(),
+    price: z.number().min(0),
+    images: z.array(z.string()),
+    sku: z.string(),
+    slug: z.string().toLowerCase(),
+    categoryId: z.string().regex(RegexMongoObjectId),
+    isActive: z.boolean().default(true),
+  })
+  .strict();
 
 const productRoutes = [
   {
@@ -13,7 +33,57 @@ const productRoutes = [
     method: "get",
     path: "/products/:id",
     handler: async (req, res) => {
-      res.json({ name: "producto 1" });
+      try {
+        const { id } = req.params;
+
+        const response = idSchema.safeParse(id);
+        if (!response.success) {
+          return res
+            .status(400)
+            .json({ message: "Bad user input", issues: response.error.issues });
+        }
+
+        const product = await Product.findById(id).populate(["category"]);
+
+        if (!product) {
+          return res.status(404).json({ message: "Product not found" });
+        }
+
+        return res.json(product);
+      } catch {
+        return res.status(500).json({ message: "Internal error" });
+      }
+    },
+  },
+  {
+    method: "post",
+    path: "/products",
+    handler: async (req, res) => {
+      try {
+        const response = productSchema.safeParse(req.body);
+
+        if (!response.success) {
+          return res
+            .status(400)
+            .json({ message: "Bad user input", issues: response.error.issues });
+        }
+
+        const category = await Category.findById(response.data.categoryId);
+
+        if (!category) {
+          return res.status(404).json({ message: "Category not found" });
+        }
+
+        const product = await Product.create({
+          ...response.data,
+          category: response.data.categoryId,
+        });
+
+        return res.status(200).json(product);
+      } catch (e) {
+        console.log(e);
+        return res.status(500).json({ message: "Internal error" });
+      }
     },
   },
 ];
