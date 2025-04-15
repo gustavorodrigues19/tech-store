@@ -16,7 +16,13 @@ export default function ProductsPage() {
       <div className="container px-5 py-24 mx-auto">
         <div className="flex flex-wrap -m-4">
           {products.map((product, key) => (
-            <Product key={`${product.id}-${key}`} />
+            <Product
+              key={`${product.id}-${key}`}
+              name={product.name}
+              images={product.images}
+              category={product.category}
+              price={product.price}
+            />
           ))}
         </div>
       </div>

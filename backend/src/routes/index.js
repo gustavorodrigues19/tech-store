@@ -1,6 +1,8 @@
+import categoryRoutes from "./categories/index.js";
 import productRoutes from "./products/index.js";
+import userRoutes from "./users/index.js";
 
-const routes = [...productRoutes];
+const routes = [...productRoutes, ...categoryRoutes, ...userRoutes];
 
 export default function loadRoutes(app) {
   routes.forEach((route) => {
