@@ -10,7 +10,7 @@ const authRoutes = [
     handler: async (req, res) => {
       try {
         const result = authSchema.safeParse(req.body);
-
+        console.log(req.body);
         if (!result.success) {
           return res
             .status(400)
