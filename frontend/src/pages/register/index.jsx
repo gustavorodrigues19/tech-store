@@ -1,15 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { register } from "../../services/auth";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { AuthContext } from "../../context/auth";
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { isLogged } = useContext(AuthContext);
 
   const handleSubmit = async (evt) => {
     evt.preventDefault();
     await register(email, password);
   };
+
+  useEffect(() => {
+    if (isLogged) {
+      navigate("/account");
+    }
+  }, [isLogged, navigate]);
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
