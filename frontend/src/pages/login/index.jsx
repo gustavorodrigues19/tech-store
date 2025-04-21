@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { login } from "../../services/auth";
 import { Link } from "react-router";
+import { AuthContext } from "../../context/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { handleLogin } = useContext(AuthContext);
 
   const handleSubmit = async (evt) => {
     evt.preventDefault();
-    await login(email, password);
+    const response = await login(email, password);
+    handleLogin(response.accessToken);
   };
 
   return (
