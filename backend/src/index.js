@@ -12,6 +12,7 @@ app.use(express.json());
 app.get("/health", async (req, res) => {
   res.json({ status: "ok" });
 });
+app.get("/", (req, res) => res.send("Express on Vercel"));
 loadRoutes(app);
 
 app.listen(port, () => {
