@@ -1,3 +1,4 @@
+// TODO: mudar http://localhost:3000 para uma variável de ambiente
 export const register = async (email, password) => {
   return fetch("http://localhost:3000/auth/sign-up", {
     method: "POST",
